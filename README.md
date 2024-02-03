@@ -24,6 +24,8 @@ git clone https://github.com/thomaschaplin/nvim-config.git ~/.config/nvim
 
 ## Plugins
 
+Here are a list of plugins which this Neovim config uses:
+
 - [goolord/alpha-nvim](github.com/goolord/alpha-nvim)
 - [windwp/nvim-autopairs](github.com/windwp/nvim-autopairs)
 - [romgrk/barbar.nvim](github.com/romgrk/barbar.nvim)
