@@ -2,7 +2,7 @@
 
 ![Neovim Dashboard](images/alpha-dashboard.png)
 
-# Neovim Configuration
+## Neovim Configuration
 
 Welcome to my Neovim configuration repository! This repository contains the configuration files for my Neovim setup, including plugins, key mappings, and other customisations.
 
