@@ -14,7 +14,9 @@ Welcome to my Neovim configuration repository! This repository contains the conf
 brew install neovim
 ```
 
-2. Clone this repository to your Neovim configuration directory. Typically, this directory is `~/.config/nvim` on Unix-based systems.
+2. Download and install a Nerd Font from [here](https://www.nerdfonts.com/font-downloads) such as [FiraCode Nerd Font](https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/FiraCode.zip)
+
+3. Clone this repository to your Neovim configuration directory. Typically, this directory is `~/.config/nvim` on Unix-based systems.
 
 ```bash
 git clone https://github.com/thomaschaplin/nvim-config.git ~/.config/nvim
