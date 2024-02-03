@@ -48,4 +48,4 @@ Here are a list of plugins which this Neovim config uses:
 
 ## Theme
 
-- [catppuccin/nvim](github.com/catppuccin/nvim)
+- [catppuccin/nvim](https://github.com/catppuccin/nvim)
