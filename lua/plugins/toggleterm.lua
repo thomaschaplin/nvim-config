@@ -1,9 +1,10 @@
 return {
-	"akinsho/toggleterm.nvim",
-	config = function()
-		require("toggleterm").setup({
-            direction = "float",
-            open_mapping = [[<c-\>]]
-        })
-	end,
+  "akinsho/toggleterm.nvim",
+  config = function()
+    require("toggleterm").setup({
+      direction = "horizontal",
+      open_mapping = [[<c-\>]],
+      autochdir = true,
+    })
+  end,
 }
