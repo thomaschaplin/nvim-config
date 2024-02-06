@@ -19,3 +19,4 @@ vim.keymap.set("n", "<C-z>", ":undo<CR>")
 vim.keymap.set("n", "<leader>h", ":nohlsearch<CR>")
 vim.wo.number = true
 vim.opt.colorcolumn = "80"
+vim.api.nvim_set_option("clipboard","unnamed")
