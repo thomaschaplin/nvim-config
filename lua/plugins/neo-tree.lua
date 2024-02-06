@@ -12,23 +12,13 @@ return {
         visible = true,
         show_hidden_count = true,
         hide_dotfiles = false,
-        hide_gitignored = true,
-        hide_by_name = {
-          '.git',
-          'node_modules'
-        },
-        hide_by_pattern = {
-          "**/node_modules/*",
-        },
-        never_show = {
-          ".DS_Store",
-          "thumbs.db"
-        },
-        always_show = {
-          ".gitignored",
-        }
+        hide_gitignored = false,
+        hide_by_name = {},
+        hide_by_pattern = {},
+        never_show = {},
+        always_show = {},
       },
-    }
+    },
   },
   config = function()
     vim.keymap.set("n", "<C-n>", ":Neotree filesystem toggle left<CR>", {})
