@@ -64,6 +64,6 @@ This Neovim configuration follows a modular structure for organisation and maint
 
 `lua/tools`: Tools and utility functions reside in this directory. Each tool is encapsulated within its own Lua file, promoting modular design principles.
 
-`lua/user`: User-specific configurations, such as keybindings and personalized settings, are stored here. The `init.lua` file in this directory orchestrates the loading of user configurations.
+`lua/user`: User-specific configurations, such as keybindings and personalized settings, are stored here. The init.lua file in this directory orchestrates the loading of user configurations.
 
 The architecture emphasizes cleanliness and isolation, promoting a structured and maintainable Neovim environment.
