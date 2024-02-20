@@ -24,28 +24,46 @@ git clone https://github.com/thomaschaplin/nvim-config.git ~/.config/nvim
 
 ## Plugins
 
-Here are a list of plugins which this Neovim config uses:
-
-- [goolord/alpha-nvim](https://github.com/goolord/alpha-nvim)
-- [windwp/nvim-autopairs](https://github.com/windwp/nvim-autopairs)
-- [romgrk/barbar.nvim](https://github.com/romgrk/barbar.nvim)
-- [hrsh7th/cmp-nvim-lsp](https://github.com/hrsh7th/cmp-nvim-lsp)
-- [L3MON4D3/LuaSnip](https://github.com/L3MON4D3/LuaSnip)
-- [hrsh7th/nvim-cmp](https://github.com/hrsh7th/nvim-cmp)
-- [mfussenegger/nvim-dap](https://github.com/mfussenegger/nvim-dap)
-- [tpope/vim-fugitive](https://github.com/tpope/vim-fugitive)
-- [lewis6991/gitsigns.nvim](https://github.com/lewis6991/gitsigns.nvim)
-- [williamboman/mason.nvim](https://github.com/williamboman/mason.nvim)
-- [williamboman/mason-lspconfig.nvim](https://github.com/williamboman/mason-lspconfig.nvim)
-- [neovim/nvim-lspconfig](https://github.com/neovim/nvim-lspconfig)
-- [nvim-lualine/lualine.nvim](https://github.com/nvim-lualine/lualine.nvim)
-- [nvim-neo-tree/neo-tree.nvim](https://github.com/nvim-neo-tree/neo-tree.nvim)
-- [nvimtools/none-ls.nvim](https://github.com/nvimtools/none-ls.nvim)
-- [nvim-telescope/telescope-ui-select.nvim](https://github.com/nvim-telescope/telescope-ui-select.nvim)
-- [nvim-telescope/telescope.nvim](https://github.com/nvim-telescope/telescope.nvim)
-- [akinsho/toggleterm.nvim](https://github.com/akinsho/toggleterm.nvim)
-- [nvim-treesitter/nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter)
+To see which plugins I'm using, take a look in the [lua/plugins](lua/plugins) directory!
 
 ## Theme
 
 - [catppuccin/nvim](https://github.com/catppuccin/nvim)
+
+## Architecture
+
+This Neovim configuration follows a modular structure for organisation and maintainability. At the heart of the configuration is `init.lua`, serving as the main entry point. It orchestrates the loading of various components housed within sub-folders.
+
+### Structure Overview
+
+```
+.
+├── README.md
+├── images
+│   └── alpha-dashboard.png
+├── init.lua
+├── lazy-lock.json
+└── lua
+    ├── plugins
+    │   ├── plugin-one.lua
+    │   └── plugin-two.lua
+    ├── tools
+    │   ├── tool-one.lua
+    │   ├── tool-two.lua
+    │   └── init.lua
+    └── user
+        ├── init.lua
+        ├── lazy.lua
+        └── options.lua
+```
+
+### Details
+`init.lua`: This file serves as the primary configuration entry point. It loads essential components and initializes the configuration.
+
+`lua/plugins`: This directory houses individual Lua files, each dedicated to configuring a specific plugin. This separation facilitates clarity and ease of management.
+
+`lua/tools`: Tools and utility functions reside in this directory. Each tool is encapsulated within its own Lua file, promoting modular design principles.
+
+`lua/user`: User-specific configurations, such as keybindings and personalized settings, are stored here. The `init.lua` file in this directory orchestrates the loading of user configurations.
+
+The architecture emphasizes cleanliness and isolation, promoting a structured and maintainable Neovim environment.
