@@ -3,7 +3,7 @@ return {
   config = function()
     require("toggleterm").setup({
       direction = "horizontal",
-      open_mapping = [[<c-\>]],
+      open_mapping = [[<c-j>]],
       autochdir = true,
     })
   end,
