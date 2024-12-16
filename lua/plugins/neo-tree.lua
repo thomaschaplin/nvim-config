@@ -12,7 +12,7 @@ return {
         visible = true,
         show_hidden_count = true,
         hide_dotfiles = false,
-        hide_gitignored = false,
+        hide_gitignored = true,
         hide_by_name = {},
         hide_by_pattern = {},
         never_show = {},
@@ -21,7 +21,7 @@ return {
     },
   },
   config = function()
-    vim.keymap.set("n", "<C-p>", ":Neotree filesystem toggle float<CR>", {})
+    vim.keymap.set("n", "<C-b>", ":Neotree filesystem toggle float<CR>", {})
     vim.keymap.set("n", "<leader>bf", ":Neotree buffers reveal float<CR>", {})
   end,
 }

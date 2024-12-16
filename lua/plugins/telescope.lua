@@ -4,13 +4,18 @@ return {
 	},
 	{
 		"nvim-telescope/telescope.nvim",
-    tag = "0.1.5",
+		tag = "0.1.8",
 		dependencies = { "nvim-lua/plenary.nvim" },
 		config = function()
 			require("telescope").setup({
 				extensions = {
 					["ui-select"] = {
 						require("telescope.themes").get_dropdown({}),
+					},
+				},
+				pickers = {
+					find_files = {
+						hidden = true,
 					},
 				},
 			})

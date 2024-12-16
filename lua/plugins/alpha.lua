@@ -32,6 +32,7 @@ return {
       dashboard.button("r", "📌  > Recent", ":Telescope oldfiles <CR>"),
       dashboard.button("p", "🗂️  > Projects", ":cd $HOME/git | Neotree filesystem toggle float<CR>"),
       dashboard.button("o", "🗃️  > Open Filesystem", ":Neotree filesystem toggle float<CR>"),
+      dashboard.button("e", "🪴  > Open LazyGit", ":LazyGit<CR>"),
       dashboard.button("d", "💬  > Dotfiles", ":cd $HOME/dotfiles | Neotree filesystem toggle float<CR>"),
       dashboard.button("s", "⚙️   > Settings", ":cd ~/.config/nvim | Neotree filesystem toggle float<CR>"),
       dashboard.button("l", "💤  > Lazy", ":Lazy<CR>"),

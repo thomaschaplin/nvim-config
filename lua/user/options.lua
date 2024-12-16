@@ -68,12 +68,12 @@ vim.opt.scrolloff = 8
 vim.opt.colorcolumn = "80"
 
 vim.opt.guicursor = {
-	"n-v-c:block", -- Normal, visual, command-line: block cursor
-	"i-ci-ve:ver25", -- Insert, command-line insert, visual-exclude: vertical bar cursor with 25% width
-	"r-cr:hor20", -- Replace, command-line replace: horizontal bar cursor with 20% height
-	"o:hor50", -- Operator-pending: horizontal bar cursor with 50% height
-	"a:blinkwait700-blinkoff400-blinkon250", -- All modes: blinking settings
-	"sm:block-blinkwait175-blinkoff150-blinkon175", -- Showmatch: block cursor with specific blinking settings
+  "n-v-c:block",                                 -- Normal, visual, command-line: block cursor
+  "i-ci-ve:ver25",                               -- Insert, command-line insert, visual-exclude: vertical bar cursor with 25% width
+  "r-cr:hor20",                                  -- Replace, command-line replace: horizontal bar cursor with 20% height
+  "o:hor50",                                     -- Operator-pending: horizontal bar cursor with 50% height
+  "a:blinkwait700-blinkoff400-blinkon250",       -- All modes: blinking settings
+  "sm:block-blinkwait175-blinkoff150-blinkon175", -- Showmatch: block cursor with specific blinking settings
 }
 
 -- Treat dash separated words as a word text object
@@ -91,6 +91,9 @@ vim.keymap.set("n", "<C-z>", ":undo<CR>")
 -- Remove highlight
 vim.keymap.set("n", "<leader>hi", ":nohlsearch<CR>")
 
+-- Open Alpha
+vim.keymap.set("n", "<leader>a", ":Alpha<CR>")
+
 -- END
 
 -- Navigate vim panes better
@@ -98,4 +101,3 @@ vim.keymap.set("n", "<leader>hi", ":nohlsearch<CR>")
 -- vim.keymap.set("n", "<c-j>", ":wincmd j<CR>")
 -- vim.keymap.set("n", "<c-h>", ":wincmd h<CR>")
 -- vim.keymap.set("n", "<c-l>", ":wincmd l<CR>")
-
