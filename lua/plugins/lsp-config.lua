@@ -29,6 +29,13 @@ return {
       capabilities = vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp").default_capabilities())
 
       local servers = {
+        docker_compose_language_service = {},
+        cssls = {},
+        bashls = {},
+        terraformls = {},
+        yamlls = {},
+        gopls = {},
+        biome = {},
         lua_ls = {
           settings = {
             Lua = {
@@ -48,7 +55,7 @@ return {
 
       require("mason-lspconfig").setup({
         ensure_installed = ensure_installed,
-        automatic_installation = true,
+        automatic_installation = false,
         handlers = {
           function(server_name)
             local server = servers[server_name] or {}
