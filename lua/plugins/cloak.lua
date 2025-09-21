@@ -1,33 +1,274 @@
 return {
 	"laytan/cloak.nvim",
+	event = { "BufReadPre", "BufNewFile" },
 	config = function()
 		require("cloak").setup({
 			enabled = true,
-			cloak_character = "*",
-			-- The applied highlight group (colors) on the cloaking, see `:h highlight`.
+			cloak_character = "•", -- More subtle than asterisk
 			highlight_group = "Comment",
-			-- Applies the length of the replacement characters for all matched
-			-- patterns, defaults to the length of the matched pattern.
-			cloak_length = nil, -- Provide a number if you want to hide the true length of the value.
-			-- Whether it should try every pattern to find the best fit or stop after the first.
+			cloak_length = nil, -- Use actual length for better security awareness
 			try_all_patterns = true,
+			cloak_on_leave = false, -- Don't cloak when leaving buffer
+			min_len = 1, -- Minimum length to cloak
 			patterns = {
+				-- Environment files (.env, .env.local, .env.production, etc.)
 				{
-					-- Match any file starting with '.env'.
-					-- This can be a table to match multiple file patterns.
-					file_pattern = ".env*",
-					-- Match an equals sign and any character after it.
-					-- This can also be a table of patterns to cloak,
-					-- example: cloak_pattern = { ':.+', '-.+' } for yaml files.
-					cloak_pattern = "=.+",
-					-- A function, table or string to generate the replacement.
-					-- The actual replacement will contain the 'cloak_character'
-					-- where it doesn't cover the original text.
-					-- If left empty the legacy behavior of keeping the first character is retained.
+					file_pattern = { ".env*", "*.env", "*.env.*" },
+					cloak_pattern = { "=.+", ": .+", ":.+" },
+					replace = nil, -- Keep first character visible for context
+				},
+
+				-- Docker Compose files
+				{
+					file_pattern = { "docker-compose*.yml", "docker-compose*.yaml", "compose*.yml", "compose*.yaml" },
+					cloak_pattern = { 
+						"password:.+", 
+						"secret:.+", 
+						"token:.+",
+						"key:.+",
+						"api_key:.+",
+						"database_url:.+",
+					},
 					replace = nil,
+				},
+
+				-- Kubernetes manifests and secrets
+				{
+					file_pattern = { "*.k8s.yml", "*.k8s.yaml", "*secret*.yml", "*secret*.yaml" },
+					cloak_pattern = {
+						"password: .+",
+						"token: .+", 
+						"key: .+",
+						"secret: .+",
+						"data:.*",
+						"stringData:.*",
+					},
+					replace = nil,
+				},
+
+				-- Terraform files
+				{
+					file_pattern = { "*.tf", "*.tfvars", "terraform.tfvars*" },
+					cloak_pattern = {
+						'= ".*password.*"',
+						'= ".*secret.*"',
+						'= ".*key.*"',
+						'= ".*token.*"',
+						'= ".*credential.*"',
+						'default = ".*"', -- Default values might be sensitive
+					},
+					replace = nil,
+				},
+
+				-- JSON configuration files
+				{
+					file_pattern = {
+						"*secret*.json",
+						"*config*.json",
+						"*credential*.json",
+						".aws/credentials",
+						".aws/config",
+					},
+					cloak_pattern = {
+						'"password": ".+"',
+						'"secret": ".+"',
+						'"token": ".+"',
+						'"key": ".+"',
+						'"apiKey": ".+"',
+						'"accessKey": ".+"',
+						'"secretKey": ".+"',
+					},
+					replace = nil,
+				},
+
+				-- YAML configuration files
+				{
+					file_pattern = {
+						"*secret*.yml",
+						"*secret*.yaml", 
+						"*config*.yml",
+						"*config*.yaml",
+						".github/workflows/*.yml",
+						".github/workflows/*.yaml",
+					},
+					cloak_pattern = {
+						"password: .+",
+						"secret: .+",
+						"token: .+",
+						"key: .+", 
+						"api_key: .+",
+						"access_key: .+",
+						"secret_key: .+",
+					},
+					replace = nil,
+				},
+
+				-- Shell scripts and configuration
+				{
+					file_pattern = { "*.sh", "*.zsh", "*.bash", ".bashrc", ".zshrc" },
+					cloak_pattern = {
+						"export .*PASSWORD=.+",
+						"export .*SECRET=.+", 
+						"export .*TOKEN=.+",
+						"export .*KEY=.+",
+						"export .*API_KEY=.+",
+					},
+					replace = nil,
+				},
+
+				-- Configuration files
+				{
+					file_pattern = { 
+						"*.ini", 
+						"*.conf", 
+						"*.config",
+						".gitconfig",
+						".ssh/config",
+					},
+					cloak_pattern = {
+						"password=.+",
+						"secret=.+",
+						"token=.+", 
+						"key=.+",
+					},
+					replace = nil,
+				},
+
+				-- Database connection strings
+				{
+					file_pattern = "*",
+					cloak_pattern = {
+						-- PostgreSQL connection strings
+						"postgres://.*:.*@.*",
+						"postgresql://.*:.*@.*",
+						-- MySQL connection strings  
+						"mysql://.*:.*@.*",
+						-- MongoDB connection strings
+						"mongodb://.*:.*@.*",
+						"mongodb+srv://.*:.*@.*",
+						-- Redis connection strings
+						"redis://.*:.*@.*",
+					},
+					replace = function(match)
+						-- Custom replacement for connection strings
+						local protocol = match:match("^(%w+)://")
+						return protocol and (protocol .. "://••••••••") or "••••••••"
+					end,
+				},
+
+				-- API URLs with tokens/keys in query params
+				{
+					file_pattern = "*",
+					cloak_pattern = {
+						"https?://.*[?&]token=[^&%s]+",
+						"https?://.*[?&]key=[^&%s]+", 
+						"https?://.*[?&]secret=[^&%s]+",
+						"https?://.*[?&]password=[^&%s]+",
+					},
+					replace = function(match)
+						return match:gsub("[?&](token|key|secret|password)=[^&%s]+", function(param)
+							return param:gsub("=[^&%s]+", "=••••••••")
+						end)
+					end,
+				},
+
+				-- Generic patterns for any file
+				{
+					file_pattern = "*",
+					cloak_pattern = {
+						-- Common secret patterns
+						"sk%-[a-zA-Z0-9]+", -- Stripe secret keys
+						"pk%-[a-zA-Z0-9]+", -- Stripe public keys (though less sensitive)
+						"ghp_[a-zA-Z0-9]+", -- GitHub personal access tokens
+						"gho_[a-zA-Z0-9]+", -- GitHub OAuth tokens
+						"ghu_[a-zA-Z0-9]+", -- GitHub user tokens
+						"ghs_[a-zA-Z0-9]+", -- GitHub server tokens
+						"ghr_[a-zA-Z0-9]+", -- GitHub refresh tokens
+						-- AWS access keys
+						"AKIA[0-9A-Z]{16}",
+						-- JWT tokens (basic pattern)
+						"ey[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+",
+					},
+					replace = function(match)
+						local len = #match
+						if len <= 8 then
+							return string.rep("•", len)
+						else
+							-- Show first 4 characters for context
+							return match:sub(1, 4) .. string.rep("•", len - 4)
+						end
+					end,
 				},
 			},
 		})
-		vim.keymap.set("n", "<leader>ct", ":CloakToggle<CR>", {})
+
+		-- Enhanced keymaps
+		local keymap = vim.keymap.set
+		keymap("n", "<leader>ct", "<cmd>CloakToggle<CR>", { desc = "Toggle cloak" })
+		keymap("n", "<leader>ce", "<cmd>CloakEnable<CR>", { desc = "Enable cloak" })
+		keymap("n", "<leader>cd", "<cmd>CloakDisable<CR>", { desc = "Disable cloak" })
+		keymap("n", "<leader>cp", "<cmd>CloakPreviewLine<CR>", { desc = "Preview current line" })
+
+		-- Auto-commands for enhanced functionality
+		local cloak_group = vim.api.nvim_create_augroup("CloakEnhancements", { clear = true })
+
+		-- Auto-enable cloak for sensitive files
+		vim.api.nvim_create_autocmd({ "BufReadPost", "BufNewFile" }, {
+			group = cloak_group,
+			pattern = {
+				".env*",
+				"*.env*", 
+				"*secret*",
+				"*credential*",
+				".aws/credentials",
+				".aws/config",
+				"docker-compose*.yml",
+				"docker-compose*.yaml",
+			},
+			callback = function()
+				vim.cmd("CloakEnable")
+				vim.notify("🔒 Cloak enabled for sensitive file", vim.log.levels.INFO, { title = "Security" })
+			end,
+		})
+
+		-- Warn when editing potentially sensitive files
+		vim.api.nvim_create_autocmd({ "BufReadPost", "BufNewFile" }, {
+			group = cloak_group,
+			pattern = {
+				"*.tf",
+				"*.tfvars", 
+				"*secret*.json",
+				"*config*.json",
+			},
+			callback = function()
+				vim.notify("⚠️  Potentially sensitive file detected", vim.log.levels.WARN, { title = "Security Alert" })
+			end,
+		})
+
+		-- Custom highlight for cloaked content
+		vim.api.nvim_set_hl(0, "CloakSecure", {
+			fg = "#6c7086", -- Muted color
+			italic = true,
+			bold = false,
+		})
+
+		-- Update cloak to use custom highlight
+		vim.defer_fn(function()
+			require("cloak").setup({
+				highlight_group = "CloakSecure",
+			})
+		end, 100)
+
+		-- Create user commands for common operations
+		vim.api.nvim_create_user_command("CloakStatus", function()
+			local cloak = require("cloak")
+			local status = cloak.is_enabled() and "enabled" or "disabled"
+			vim.notify("🔒 Cloak is " .. status, vim.log.levels.INFO)
+		end, { desc = "Show cloak status" })
+
+		vim.api.nvim_create_user_command("CloakPatterns", function()
+			vim.notify("🔍 Cloak patterns configured for: .env, docker-compose, k8s, terraform, json, yaml, shell, and more", 
+				vim.log.levels.INFO, { title = "Cloak Patterns" })
+		end, { desc = "Show configured cloak patterns" })
 	end,
 }

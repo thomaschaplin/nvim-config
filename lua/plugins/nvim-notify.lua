@@ -7,6 +7,7 @@ return {
     local filtered_message = { "No information available" }
 
     -- Override notify function to filter out messages
+    ---@diagnostic disable-next-line: duplicate-set-field
     vim.notify = function(message, level, opts)
       local merged_opts = vim.tbl_extend("force", {
         on_open = function(win)

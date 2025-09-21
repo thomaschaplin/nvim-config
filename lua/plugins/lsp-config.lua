@@ -19,7 +19,6 @@ return {
     "neovim/nvim-lspconfig",
     dependencies = {
       { "williamboman/mason.nvim", config = true },
-      "williamboman/mason-lspconfig.nvim",
       "WhoIsSethDaniel/mason-tool-installer.nvim",
       { "j-hui/fidget.nvim",       opts = {} },
       "hrsh7th/cmp-nvim-lsp",
@@ -29,13 +28,13 @@ return {
       capabilities = vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp").default_capabilities())
 
       local servers = {
+        helm_ls = {},
         docker_compose_language_service = {},
         cssls = {},
         bashls = {},
         terraformls = {},
         yamlls = {},
         gopls = {},
-        biome = {},
         lua_ls = {
           settings = {
             Lua = {
@@ -49,21 +48,29 @@ return {
 
       require("mason").setup()
 
-      local ensure_installed = vim.tbl_keys(servers or {})
-      vim.list_extend(ensure_installed, {}) -- TODO: look into what I can have here
-      require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
-
-      require("mason-lspconfig").setup({
-        ensure_installed = ensure_installed,
-        automatic_installation = false,
-        handlers = {
-          function(server_name)
-            local server = servers[server_name] or {}
-            server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
-            require("lspconfig")[server_name].setup(server)
-          end,
-        },
-      })
+      -- Mason package names (different from LSP server names)
+      local mason_packages = {
+        "helm-ls",
+        "docker-compose-language-service", 
+        "css-lsp",
+        "bash-language-server",
+        "terraform-ls",
+        "yaml-language-server",
+        "gopls",
+        "lua-language-server",
+      }
+      require("mason-tool-installer").setup({ ensure_installed = mason_packages })
+      
+      -- Setup LSP servers manually with error handling
+      for server_name, server_config in pairs(servers) do
+        local ok, _ = pcall(function()
+          server_config.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server_config.capabilities or {})
+          vim.lsp.config(server_name, server_config)
+        end)
+        if not ok then
+          vim.notify("Failed to setup LSP server: " .. server_name, vim.log.levels.WARN)
+        end
+      end
 
       vim.api.nvim_create_autocmd("LspAttach", {
         group = vim.api.nvim_create_augroup("kickstart-lsp-attach", { clear = true }),
