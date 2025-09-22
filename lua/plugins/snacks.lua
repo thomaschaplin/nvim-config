@@ -44,6 +44,8 @@ return {
   },
   keys = {
     { "<C-f>", function() Snacks.picker.grep() end, desc = "Grep" },
+    { "<C-r>", function() Snacks.picker.projects() end, desc = "Projects" },
+    { "<leader>mp", function() Snacks.picker.man() end, desc = "Man Pages" },
     { "<C-p>", function() Snacks.picker.files() end, desc = "Find Files" },
     { "<C-b>", function() Snacks.explorer.open() end, desc = "Explorer" },
     { "<leader>,", function() Snacks.picker.buffers() end, desc = "Buffers" },
