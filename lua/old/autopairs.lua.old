@@ -18,7 +18,7 @@ return {
 			},
 			
 			-- Disable autopairs for certain filetypes
-			disable_filetype = { "TelescopePrompt", "spectre_panel", "alpha" },
+			disable_filetype = { "TelescopePrompt", "spectre_panel", "snacks_dashboard" },
 			disable_in_macro = false, -- Disable when recording or executing a macro
 			disable_in_visualblock = false, -- Disable when selecting in visual block mode
 			disable_in_replace_mode = true,

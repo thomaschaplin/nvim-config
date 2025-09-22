@@ -8,7 +8,7 @@ return {
   },
   keys = {
     {
-      "<leader>k",
+      "<leader>?",
       function()
         require("which-key").show({ global = false })
       end,

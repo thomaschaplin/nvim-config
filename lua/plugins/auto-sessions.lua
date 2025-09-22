@@ -1,7 +1,7 @@
 return {
   "rmagatti/auto-session",
   dependencies = {
-    "nvim-telescope/telescope.nvim",
+    "folke/snacks.nvim",
   },
   config = function()
     require("auto-session").setup({
@@ -26,20 +26,22 @@ return {
 
       -- Enhanced session lens configuration
       session_lens = {
+        picker = "snacks",
         buftypes_to_ignore = { "help", "nofile", "terminal", "prompt" },
         load_on_setup = true,
-        theme_conf = {
-          winblend = 10,
-          border = true,
-          layout_strategy = "center",
-          layout_config = {
-            width = 0.8,
-            height = 0.6,
-            preview_cutoff = 120,
-          },
-          borderchars = { "─", "│", "─", "│", "╭", "╮", "╯", "╰" },
+        mappings = {
+          delete_session = { "i", "<C-d>" },
+          alternate_session = { "i", "<C-s>" },
+          copy_session = { "i", "<C-y>" }
         },
-        previewer = true,
+        picker_opts = {
+          -- Snacks-specific options
+          layout = {
+            layout = "list",
+          },
+          preview = false,
+        },
+        previewer = false,
         prompt_title = "Sessions",
         results_title = "Available Sessions",
         selection_caret = "➤ ",
@@ -66,7 +68,7 @@ return {
 
       -- Better file handling
       bypass_session_save_file_types = {
-        "alpha",
+        "snacks_dashboard",
         "dashboard",
         "NvimTree",
         "neo-tree",
@@ -79,10 +81,7 @@ return {
 
     -- Enhanced keymaps
     local keymap = vim.keymap.set
-    keymap("n", "<leader>ss", "<cmd>AutoSession save<CR>", { desc = "Save session" })
-    keymap("n", "<leader>sr", "<cmd>AutoSession restore<CR>", { desc = "Restore session" })
     keymap("n", "<leader>sd", "<cmd>AutoSession delete<CR>", { desc = "Delete session" })
-    keymap("n", "<leader>sf", "<cmd>AutoSession search<CR>", { desc = "Find session" })
     keymap("n", "<C-r>", "<cmd>AutoSession search<CR>", { desc = "Search sessions" })
 
     -- Auto-commands for better session management
@@ -91,7 +90,7 @@ return {
 
     -- Disable auto-save for certain file types
     autocmd("FileType", {
-      pattern = { "alpha", "dashboard", "lazy", "mason", "TelescopePrompt" },
+      pattern = { "snacks_dashboard", "dashboard", "lazy", "mason", "TelescopePrompt" },
       callback = function()
         vim.b.auto_session_enabled = false
       end,

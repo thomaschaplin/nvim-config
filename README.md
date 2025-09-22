@@ -1,6 +1,6 @@
 # nvim-config
 
-![Neovim Dashboard](images/alpha-dashboard.png)
+![Neovim Dashboard](images/dashboard.png)
 
 ## Neovim Configuration
 

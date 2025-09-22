@@ -1,116 +1,57 @@
 return {
-  -- LazyDev Plugin: Configures Lua LSP for Neovim configs and runtime
-  {
-    "folke/lazydev.nvim",
-    ft = "lua",
-    opts = {
-      library = {
-        { path = "luvit-meta/library", words = { "vim%.uv" } },
-      },
-    },
-  },
-  -- Luvit Meta Plugin: Provides Lua types for Luvit
-  {
-    "Bilal2453/luvit-meta",
-    lazy = true,
-  },
-  -- Main LSP Configuration
-  {
-    "neovim/nvim-lspconfig",
-    dependencies = {
-      { "williamboman/mason.nvim", config = true },
-      "WhoIsSethDaniel/mason-tool-installer.nvim",
-      { "j-hui/fidget.nvim",       opts = {} },
-      "hrsh7th/cmp-nvim-lsp",
-    },
-    config = function()
-      local capabilities = vim.lsp.protocol.make_client_capabilities()
-      capabilities = vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp").default_capabilities())
+  "neovim/nvim-lspconfig",
+  event = { "BufReadPre", "BufNewFile" },
+  config = function()
+    -- Configure diagnostics
+    vim.diagnostic.config({
+      virtual_text = true,
+      signs = true,
+      underline = true,
+      update_in_insert = false,
+      severity_sort = true,
+    })
 
-      local servers = {
-        helm_ls = {},
-        docker_compose_language_service = {},
-        cssls = {},
-        bashls = {},
-        terraformls = {},
-        yamlls = {},
-        gopls = {},
-        lua_ls = {
-          settings = {
-            Lua = {
-              completion = {
-                callSnippet = "Replace",
-              },
-            },
-          },
-        },
-      }
+    -- Global LSP keymaps using Neovim 0.11 defaults where possible
+    vim.api.nvim_create_autocmd("LspAttach", {
+      group = vim.api.nvim_create_augroup("UserLspConfig", {}),
+      callback = function(ev)
+        local opts = { buffer = ev.buf }
 
-      require("mason").setup()
+        -- Use new default keymaps where available
+        vim.keymap.set("n", "grn", vim.lsp.buf.rename, opts)
+        vim.keymap.set({ "n", "v" }, "gra", vim.lsp.buf.code_action, opts)
+        vim.keymap.set("n", "grr", vim.lsp.buf.references, opts)
+        vim.keymap.set("n", "gri", vim.lsp.buf.implementation, opts)
+        vim.keymap.set("n", "gO", vim.lsp.buf.document_symbol, opts)
+        vim.keymap.set("i", "<C-s>", vim.lsp.buf.signature_help, opts)
 
-      -- Mason package names (different from LSP server names)
-      local mason_packages = {
-        "helm-ls",
-        "docker-compose-language-service", 
-        "css-lsp",
-        "bash-language-server",
-        "terraform-ls",
-        "yaml-language-server",
-        "gopls",
-        "lua-language-server",
-      }
-      require("mason-tool-installer").setup({ ensure_installed = mason_packages })
-      
-      -- Setup LSP servers manually with error handling
-      for server_name, server_config in pairs(servers) do
-        local ok, _ = pcall(function()
-          server_config.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server_config.capabilities or {})
-          vim.lsp.config(server_name, server_config)
-        end)
-        if not ok then
-          vim.notify("Failed to setup LSP server: " .. server_name, vim.log.levels.WARN)
-        end
-      end
+        -- Keep common keymaps
+        vim.keymap.set("n", "gD", vim.lsp.buf.declaration, opts)
+        vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
+        vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
+        vim.keymap.set("n", "<leader>D", vim.lsp.buf.type_definition, opts)
+        vim.keymap.set("n", "<leader>f", function()
+          vim.lsp.buf.format { async = true }
+        end, opts)
 
-      vim.api.nvim_create_autocmd("LspAttach", {
-        group = vim.api.nvim_create_augroup("kickstart-lsp-attach", { clear = true }),
-        callback = function(event)
-          local map = function(keys, func, desc, mode)
-            mode = mode or "n"
-            vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = "LSP: " .. desc })
-          end
+        -- Workspace folders
+        vim.keymap.set("n", "<leader>wa", vim.lsp.buf.add_workspace_folder, opts)
+        vim.keymap.set("n", "<leader>wr", vim.lsp.buf.remove_workspace_folder, opts)
+        vim.keymap.set("n", "<leader>wl", function()
+          print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+        end, opts)
+      end,
+    })
 
-          map("gd", require("telescope.builtin").lsp_definitions, "[G]oto [D]efinition")
-          map("gr", require("telescope.builtin").lsp_references, "[G]oto [R]eferences")
-          map("gI", require("telescope.builtin").lsp_implementations, "[G]oto [I]mplementation")
-          map("<leader>D", require("telescope.builtin").lsp_type_definitions, "Type [D]efinition")
-          map("<leader>ds", require("telescope.builtin").lsp_document_symbols, "[D]ocument [S]ymbols")
-          map(
-            "<leader>ws",
-            require("telescope.builtin").lsp_dynamic_workspace_symbols,
-            "[W]orkspace [S]ymbols"
-          )
-          map("<leader>rn", vim.lsp.buf.rename, "[R]e[n]ame")
-          map("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction", { "n", "x" })
-          map("gD", vim.lsp.buf.declaration, "[G]oto [D]eclaration")
+    -- Load LSP configurations from lsp/ directory
+    local config_path = vim.fn.stdpath("config")
 
-          local client = vim.lsp.get_client_by_id(event.data.client_id)
-          if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight) then
-            local highlight_augroup =
-                vim.api.nvim_create_augroup("kickstart-lsp-highlight", { clear = false })
-            vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
-              buffer = event.buf,
-              group = highlight_augroup,
-              callback = vim.lsp.buf.document_highlight,
-            })
-            vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
-              buffer = event.buf,
-              group = highlight_augroup,
-              callback = vim.lsp.buf.clear_references,
-            })
-          end
-        end,
-      })
-    end,
-  },
+    -- Load gopls config
+    local gopls_config = dofile(config_path .. "/lsp/gopls.lua")
+    vim.lsp.config.gopls = gopls_config
+
+    -- Load lua_ls config
+    local lua_ls_config = dofile(config_path .. "/lsp/lua_ls.lua")
+    vim.lsp.config.lua_ls = lua_ls_config
+  end,
 }

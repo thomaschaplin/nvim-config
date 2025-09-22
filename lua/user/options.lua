@@ -88,11 +88,18 @@ vim.opt.ruler = true
 -- Undo via CTRL + Z
 vim.keymap.set("n", "<C-z>", ":undo<CR>")
 
+-- Save file with CTRL + S
+vim.keymap.set("n", "<C-s>", ":w<CR>", { desc = "Save file" })
+vim.keymap.set("i", "<C-s>", "<Esc>:w<CR>a", { desc = "Save file" })
+
 -- Remove highlight
 vim.keymap.set("n", "<leader>hi", ":nohlsearch<CR>")
 
--- Open Alpha
-vim.keymap.set("n", "<leader>a", ":Alpha<CR>")
+-- Toggle wrap with Leader + Z
+vim.keymap.set("n", "<leader>z", function() vim.opt.wrap = not vim.opt.wrap:get() end, { desc = "Toggle wrap" })
+
+-- Open Dashboard
+vim.keymap.set("n", "<leader>a", function() require("snacks").dashboard.open() end)
 
 -- END
 

@@ -76,14 +76,14 @@ return {
 				-- Text object
 				map({ "o", "x" }, "ih", ":<C-U>Gitsigns select_hunk<CR>", { desc = "Select hunk" })
 			end,
-			current_line_blame = false, -- Toggle with <leader>tb
+			current_line_blame = true, -- Enable inline blame by default
 			current_line_blame_opts = {
 				virt_text = true,
 				virt_text_pos = "eol", -- 'eol' | 'overlay' | 'right_align'
-				delay = 1000,
+				delay = 500, -- Reduced delay for faster display
 				ignore_whitespace = false,
 			},
-			current_line_blame_formatter = "<author>, <author_time:%Y-%m-%d> - <summary>",
+			current_line_blame_formatter = "<author>, <author_time:%d-%m-%Y> - <summary>",
 			sign_priority = 6,
 			update_debounce = 100,
 			status_formatter = nil, -- Use default

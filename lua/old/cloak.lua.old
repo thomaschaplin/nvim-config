@@ -21,9 +21,9 @@ return {
 				-- Docker Compose files
 				{
 					file_pattern = { "docker-compose*.yml", "docker-compose*.yaml", "compose*.yml", "compose*.yaml" },
-					cloak_pattern = { 
-						"password:.+", 
-						"secret:.+", 
+					cloak_pattern = {
+						"password:.+",
+						"secret:.+",
 						"token:.+",
 						"key:.+",
 						"api_key:.+",
@@ -37,7 +37,7 @@ return {
 					file_pattern = { "*.k8s.yml", "*.k8s.yaml", "*secret*.yml", "*secret*.yaml" },
 					cloak_pattern = {
 						"password: .+",
-						"token: .+", 
+						"token: .+",
 						"key: .+",
 						"secret: .+",
 						"data:.*",
@@ -85,7 +85,7 @@ return {
 				{
 					file_pattern = {
 						"*secret*.yml",
-						"*secret*.yaml", 
+						"*secret*.yaml",
 						"*config*.yml",
 						"*config*.yaml",
 						".github/workflows/*.yml",
@@ -95,7 +95,7 @@ return {
 						"password: .+",
 						"secret: .+",
 						"token: .+",
-						"key: .+", 
+						"key: .+",
 						"api_key: .+",
 						"access_key: .+",
 						"secret_key: .+",
@@ -108,7 +108,7 @@ return {
 					file_pattern = { "*.sh", "*.zsh", "*.bash", ".bashrc", ".zshrc" },
 					cloak_pattern = {
 						"export .*PASSWORD=.+",
-						"export .*SECRET=.+", 
+						"export .*SECRET=.+",
 						"export .*TOKEN=.+",
 						"export .*KEY=.+",
 						"export .*API_KEY=.+",
@@ -118,9 +118,9 @@ return {
 
 				-- Configuration files
 				{
-					file_pattern = { 
-						"*.ini", 
-						"*.conf", 
+					file_pattern = {
+						"*.ini",
+						"*.conf",
 						"*.config",
 						".gitconfig",
 						".ssh/config",
@@ -128,7 +128,7 @@ return {
 					cloak_pattern = {
 						"password=.+",
 						"secret=.+",
-						"token=.+", 
+						"token=.+",
 						"key=.+",
 					},
 					replace = nil,
@@ -141,7 +141,7 @@ return {
 						-- PostgreSQL connection strings
 						"postgres://.*:.*@.*",
 						"postgresql://.*:.*@.*",
-						-- MySQL connection strings  
+						-- MySQL connection strings
 						"mysql://.*:.*@.*",
 						-- MongoDB connection strings
 						"mongodb://.*:.*@.*",
@@ -161,7 +161,7 @@ return {
 					file_pattern = "*",
 					cloak_pattern = {
 						"https?://.*[?&]token=[^&%s]+",
-						"https?://.*[?&]key=[^&%s]+", 
+						"https?://.*[?&]key=[^&%s]+",
 						"https?://.*[?&]secret=[^&%s]+",
 						"https?://.*[?&]password=[^&%s]+",
 					},
@@ -205,9 +205,6 @@ return {
 		-- Enhanced keymaps
 		local keymap = vim.keymap.set
 		keymap("n", "<leader>ct", "<cmd>CloakToggle<CR>", { desc = "Toggle cloak" })
-		keymap("n", "<leader>ce", "<cmd>CloakEnable<CR>", { desc = "Enable cloak" })
-		keymap("n", "<leader>cd", "<cmd>CloakDisable<CR>", { desc = "Disable cloak" })
-		keymap("n", "<leader>cp", "<cmd>CloakPreviewLine<CR>", { desc = "Preview current line" })
 
 		-- Auto-commands for enhanced functionality
 		local cloak_group = vim.api.nvim_create_augroup("CloakEnhancements", { clear = true })
@@ -217,7 +214,7 @@ return {
 			group = cloak_group,
 			pattern = {
 				".env*",
-				"*.env*", 
+				"*.env*",
 				"*secret*",
 				"*credential*",
 				".aws/credentials",
@@ -236,7 +233,7 @@ return {
 			group = cloak_group,
 			pattern = {
 				"*.tf",
-				"*.tfvars", 
+				"*.tfvars",
 				"*secret*.json",
 				"*config*.json",
 			},
@@ -267,7 +264,7 @@ return {
 		end, { desc = "Show cloak status" })
 
 		vim.api.nvim_create_user_command("CloakPatterns", function()
-			vim.notify("🔍 Cloak patterns configured for: .env, docker-compose, k8s, terraform, json, yaml, shell, and more", 
+			vim.notify("🔍 Cloak patterns configured for: .env, docker-compose, k8s, terraform, json, yaml, shell, and more",
 				vim.log.levels.INFO, { title = "Cloak Patterns" })
 		end, { desc = "Show configured cloak patterns" })
 	end,
