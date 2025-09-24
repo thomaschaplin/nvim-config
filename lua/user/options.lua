@@ -101,6 +101,9 @@ vim.keymap.set("n", "<leader>z", function() vim.opt.wrap = not vim.opt.wrap:get(
 -- Open Dashboard
 vim.keymap.set("n", "<leader>a", function() require("snacks").dashboard.open() end)
 
+-- Set the default border for all floating windows
+vim.opt.winborder = 'rounded'
+
 -- END
 
 -- Navigate vim panes better
